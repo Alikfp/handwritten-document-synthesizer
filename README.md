@@ -21,6 +21,7 @@ The following are the main known issues which need to be solved:
 - When cloning a dataset, page width is not adjusted to text precisely because it can cause an error.
 
 ## Install dependencies
+# LINUX
 To run this code, you must have Python 2.7 installed.
 You also need some libraries for text rendering:
 ```bash
@@ -35,6 +36,16 @@ Finally, the following python packages are required:
 sudo pip install Pillow matplotlib numpy opencv-contrib-python scikit-image scipy
 ```
 
+# MAC OS
+First install pango and cairo using brew
+```bash
+brew install pango
+```
+```bash
+brew install cairo
+```
+
+then you need the python bindings, or else python will not be able to find the module. The relevant python binding is "pytgk", it cannot be installed through "brew" anymore, so download and install it from [here](http://sourceforge.net/projects/zero-install/files/PyGTK/2.24.0/org.pygtk.macosx.pkg/download)
 ## Usage
 
 See the readme in the `synthesizer` and `IAM_utilities` folders for usage information.
