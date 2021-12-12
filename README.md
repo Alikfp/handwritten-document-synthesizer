@@ -45,7 +45,7 @@ brew install pango
 brew install cairo
 ```
 
-then you need the python bindings, or else python will not be able to find the module. The relevant python binding is "pytgk", it cannot be installed through "brew" anymore, so download and install it from [here](http://sourceforge.net/projects/zero-install/files/PyGTK/2.24.0/org.pygtk.macosx.pkg/download)
+then you need the python bindings, or else python will not be able to find the module. The relevant python binding is "pytgk", it cannot be installed through "brew" anymore, so download and install it from [here.](http://sourceforge.net/projects/zero-install/files/PyGTK/2.24.0/org.pygtk.macosx.pkg/download)
 ## Usage
 
 See the readme in the `synthesizer` and `IAM_utilities` folders for usage information.
