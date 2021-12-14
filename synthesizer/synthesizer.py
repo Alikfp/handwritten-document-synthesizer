@@ -6,7 +6,7 @@ import string
 import pickle
 import os
 import sys
-import StringIO
+from io import StringIO
 from math import floor, ceil
 
 # supresses innocuous, verbose warnings caused by scipy
@@ -567,7 +567,7 @@ class Author(object):
 class Corpora(object):
     def __init__(self, corpora_dir):
         self.corpora_dir = corpora_dir
-        self.files = os.listdir(self.corpora_dir)
+        self.files = [ f for f in os.listdir(self.corpora_dir) if f != '.DS_Store']
         self.num_files = len(self.files)
         self.curr_file = 0
         self._load_next_file()
@@ -583,9 +583,10 @@ class Corpora(object):
         return text
 
     def _load_next_file(self):
+        print(self.curr_file)
         if self.curr_file == self.num_files:
             return False
-        print "Using text from", self.files[self.curr_file]
+        print ("Using text from", self.files[self.curr_file])
         with open_txt(os.path.join(self.corpora_dir, self.files[self.curr_file]), mode="r") as f:
             self.text = StringIO.StringIO(f.read())
             self.curr_file += 1
@@ -842,7 +843,7 @@ class Synthesizer(object):
         """ Debug function to print the text associated with the generated segments
         """
         for s in segment_data:
-            print self.current_page_caption[s["start"]:s["end"]]
+            print (self.current_page_caption[s["start"]:s["end"]])
 
     def stitch_ranges(self, caption, range_array, char_ltrb):
         """Takes a string, its respective bounding boxes, and ranges of all the substrings and provides bounding boxes
@@ -950,7 +951,7 @@ class CorporaSynthesizer(Synthesizer):
 
         if page_width:
             if page_width < self.crop_edge_ltrb[0] + self.crop_edge_ltrb[2] + self.letter_height*5:
-                print "Error: Page width too small."
+                print ("Error: Page width too small.")
                 sys.exit()
             self.image_width = page_width
         else:
@@ -960,7 +961,7 @@ class CorporaSynthesizer(Synthesizer):
             self.corpus = Corpora(corpus)
             #self.corpus = OcrCorpus.create_file_corpus(corpus)
         else:
-            print "Using default online corpus."
+            print ("Using default online corpus.")
             self.corpus = OcrCorpus.create_iliad_corpus(lang='eng')
 
         self.chars_per_page = chars_per_page
@@ -1093,10 +1094,10 @@ class DatasetSynthesizer(Synthesizer):
             lines_path = os.path.join(self.lines_path, author.id)
             mkdir_p(lines_path)
 
-        print "Generating forms of author {}...".format(author.id)
+        print ("Generating forms of author {}...".format(author.id))
 
         for form in author.forms:
-            print "\t{}".format(form.id)
+            print ("\t{}".format(form.id))
             # generates the form
             self.generate_page(author.font, form.text)
             save_image_float(1 - self.current_img, os.path.join(forms_path, form.id + ".png"))
@@ -1119,7 +1120,7 @@ def common_init(load_last_seed, out_path):
 
     # mechanism which allows to save the random numpy seed or load the last one
     if load_last_seed:
-        print "Loading last seed."
+        print( "Loading last seed.")
         with open(os.path.join(out_path, "numpy_seed.pkl"), "r") as s:
             np.random.set_state(pickle.load(s))
     else:
@@ -1146,7 +1147,7 @@ def common_init(load_last_seed, out_path):
     """
 
     # backgrounds which will be used for pages
-    bg_base_path = os.path.join(src_dir, "data", "backgrounds", "white")
+    bg_base_path = os.path.join(src_dir, "data", "backgrounds", "old")
     bg_paths = []
     for img in os.listdir(bg_base_path):
         bg_paths.append(os.path.join(bg_base_path, img))
@@ -1163,7 +1164,7 @@ def clone_dataset(letter_height, words, lines, out_path, load_last_seed, constan
         synth.generate_author_forms(author)
 
     synth.finalize()
-    print "Finished!"
+    print ("Finished!")
 
 def generate_pages(letter_height, words, lines, out_path, load_last_seed, constant_width, distort_bboxes, num_pages, page_width, chars_per_page, corpus):
     font_list, bg_paths = common_init(load_last_seed, out_path)
@@ -1171,8 +1172,8 @@ def generate_pages(letter_height, words, lines, out_path, load_last_seed, consta
     synth = CorporaSynthesizer(letter_height, words, lines, out_path, bg_paths, font_list, constant_width, distort_bboxes, page_width, chars_per_page, corpus)
 
     while synth.page_count < num_pages:
-        print "Rendering page {}/{}...".format(synth.page_count+1, num_pages)
+        print ("Rendering page {}/{}...".format(synth.page_count+1, num_pages))
         synth.generate_random_page()
 
     synth.finalize()
-    print "Finished!"
+    print ("Finished!")
